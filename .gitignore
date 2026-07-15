@@ -1,0 +1,6 @@
+# Ignora tutto...
+*
+# ...tranne ciò che segue
+!.gitignore
+!early-init.el
+!init.el
