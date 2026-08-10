@@ -430,6 +430,42 @@
 
 (setq-default line-spacing 2)
 
+;;; --- Aspetto: spaziatura di finestre e riquadri ---
+
+;; spacious-padding (GNU ELPA): visual-only tweaks to frame parameters and
+;; faces.  No command or key binding is affected.
+;;
+;; What it buys us: side-by-side windows are separated by 30 px of
+;; background colour instead of a 1 px line, so each pane reads as a
+;; distinct surface.  Mode line and fringes gain some breathing room.
+;;
+;; Must come AFTER the theme is loaded: the mode reads the `default' face
+;; background to paint the dividers with it.
+;;
+;; Reversible at any time with M-x spacious-padding-mode: the mode stores
+;; the original frame parameters and restores them when disabled.
+(use-package spacious-padding
+  :custom
+  ;; Upstream defaults, kept here for visibility; only
+  ;; :internal-border-width differs, to preserve the 8 px inner margin
+  ;; already set in early-init.el and avoid a jump at startup.
+  ;;
+  ;; Never set :right-divider-width below 2: the package hides the
+  ;; `vertical-border' face unconditionally, but only paints the divider
+  ;; when its width is greater than 1.  Below that, windows would end up
+  ;; with no visible separation at all.
+  (spacious-padding-widths
+   '( :internal-border-width 8
+      :header-line-width 4
+      :mode-line-width 6
+      :custom-button-width 3
+      :tab-width 4
+      :right-divider-width 30
+      :scroll-bar-width 8
+      :fringe-width 8))
+  :init
+  (spacious-padding-mode 1))
+
 ;;; --- Minibuffer moderno ---
 
 ;; Permette di usare comandi del minibuffer mentre un minibuffer è già attivo.
