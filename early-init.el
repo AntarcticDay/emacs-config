@@ -17,9 +17,9 @@
 ;; Rende la barra del titolo trasparente, integrandola col tema della finestra (stile app macOS).
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 
-;; Margine interno (12 pixel) tra il bordo della finestra e il contenuto, su tutti e quattro i lati (stile app macOS).
+;; Margine interno (14 pixel) tra il bordo della finestra e il contenuto, su tutti e quattro i lati (stile app macOS).
 ;; Il valore DEVE restare allineato a :internal-border-width in init.el: questo file dipinge il primo frame, spacious-padding lo ridefinisce subito dopo. Se i due numeri divergono, all'avvio si vede il margine cambiare di scatto.
-(push '(internal-border-width . 12) default-frame-alist)
+(push '(internal-border-width . 14) default-frame-alist)
 
 ;; Dimensioni della finestra all'apertura: 100 colonne x 45 righe.
 (add-to-list 'default-frame-alist '(width  . 100))

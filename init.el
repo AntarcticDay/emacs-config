@@ -381,7 +381,38 @@
 
 ;;; ---
 
+;;; --- Tema: dichiarazione del pacchetto ---
+
+;; modus-themes from GNU ELPA, installed on top of the copy bundled with
+;; Emacs 30 (version 4.x).  Reference version: 5.3.0.  Version 5 is what
+;; brings the palette machinery we are after: semantic mappings, palette
+;; overrides and derivative themes.
+;;
+;; This declaration MUST come before any `load-theme' call, and it is the
+;; whole point of the block.  Both copies sit on disk at once: the built-in
+;; themes are not in the `load-path' and are reached through `require-theme',
+;; while the ELPA copy is an ordinary package reached through `require'.
+;; Declaring the package is what makes the ELPA one win.
+;;
+;; :demand t defeats use-package's lazy loading on purpose -- the theme has to
+;; be in place at startup, not on first use.  :ensure is implicit here, since
+;; use-package-always-ensure is set further up.
+;;
+;; Cost: the package is loaded at every startup, but this is not new -- a
+;; theme file pulls it in anyway.  What changes is only which copy is loaded.
+;;
+;; Graceful degradation is left to the block below, which keeps using plain
+;; `load-theme': that works on both 4.x and 5.x, so on a machine where this
+;; package fails to install, Emacs falls back to the bundled themes.
+
+(use-package modus-themes
+  :demand t)
+
+;;; ---
+
 ;; Piccole rifiniture estetiche dei temi modus: corsivo per commenti e costrutti "doc", grassetto per le parole chiave.
+;; Vanno valutate PRIMA del caricamento del tema; cambiandole a Emacs avviato, il tema va ricaricato.
+;; Nota: dalla versione 5 queste due opzioni governano molte più facce di prima (diverse facce che erano incondizionatamente in grassetto o corsivo ora dipendono da qui). Aspettati quindi più grassetti e corsivi rispetto alla 4.x: se non piacciono, la leva è questa.
 
 (setq modus-themes-italic-constructs t
       modus-themes-bold-constructs t)
@@ -389,9 +420,9 @@
 ;;; ---
 
 ;; Tema che segue automaticamente l'aspetto di sistema chiaro/scuro.
-;; Usa i temi modus, integrati in Emacs.
 ;; L'hook ns-system-appearance-change-functions è una funzionalità esclusiva di Emacs Plus: se la build in uso non ce l'ha (Emacs vanilla, terminale...), si ripiega su un tema fisso.
 ;; La funzione è idempotente (disattiva prima i temi attivi), quindi un'eventuale doppia chiamata all'avvio è innocua.
+;; Nota: si usa load-theme e non modus-themes-load-theme (comodo, perché disattiva da sé i temi attivi) perché quest'ultimo esiste solo nella 5.x: load-theme mantiene il file funzionante anche dove il pacchetto non è installato.
 ;; Nota sulla barra del titolo trasparente (early-init.el): con ns-appearance a nil (il default), macOS fa seguire alla finestra l'aspetto di sistema. Poiché anche il tema segue l'aspetto di sistema, barra e tema restano sincronizzati PER COSTRUZIONE: nessun intervento necessario. Servirebbe impostare ns-appearance solo adottando un tema fisso scollegato dal sistema.
 
 (defun my/apply-theme (appearance)
