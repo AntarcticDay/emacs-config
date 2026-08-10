@@ -41,14 +41,14 @@ Follows the XDG convention: it lives in `~/.config/emacs/`, not in
 
 ## Installation
 
-    git clone <URL-CODEBERG> ~/.config/emacs
+    git clone https://codeberg.org/AntarcticNight/emacs-config ~/.config/emacs
 
 On first launch Emacs downloads and installs the packages into `elpa/`
 by itself.
 
 ## Repository
 
-- Primary: Codeberg — <URL-CODEBERG>
+- Primary: Codeberg — https://codeberg.org/AntarcticNight/emacs-config
 - Mirror: GitHub — https://github.com/AntarcticDay/emacs-config
   (mirror only; all work is pushed to Codeberg)
 
