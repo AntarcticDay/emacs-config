@@ -686,12 +686,23 @@
 
 ;;; --- Meow: editing modale ---
 
-;; Configurazione QWERTY ufficiale, come suggerita dalla documentazione.
+;; Configurazione QWERTY presa dalla documentazione della versione INSTALLATA
+;; di meow, la 1.5.0 di NonGNU ELPA (le priorità degli archivi impostate più
+;; sopra fanno preferire NonGNU a MELPA: meow arriva sempre da lì).
+;; ATTENZIONE: la documentazione di meow che si trova online descrive il ramo
+;; di sviluppo, non la 1.5.0. Due differenze già oggi:
+;; - lì la funzione usata qui sotto si chiama meow-motion-define-key;
+;; - lì le due righe '("j" . "H-j") e '("k" . "H-k") sono state rimosse,
+;;   perché il leader raggiunge da solo il comando originale.
+;; Con la 1.5.0 servono entrambe le cose come sono scritte qui. Alla prossima
+;; release di meow questo blocco andrà riallineato in blocco, non a pezzi.
+;; Riferimenti sempre allineati alla versione installata, perché arrivano
+;; dentro il pacchetto: M-x meow-tutor e, a meow attivo, SPC ?
 
 (defun my/meow-setup ()
   "Layout QWERTY standard per meow (dalla documentazione ufficiale)."
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-motion-define-key
+  (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
    '("<escape>" . ignore))
