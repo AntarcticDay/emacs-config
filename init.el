@@ -1,4 +1,3 @@
-
 ;;; init.el -*- lexical-binding: t -*-
 
 ;; Configurazione principale, caricata dopo early-init.el.
@@ -432,39 +431,78 @@
 
 ;;; --- Aspetto: spaziatura di finestre e riquadri ---
 
-;; spacious-padding (GNU ELPA): visual-only tweaks to frame parameters and
-;; faces.  No command or key binding is affected.
+;; spacious-padding (GNU ELPA): visual-only tweaks to frame parameters
+;; and faces.  No command or key binding is affected.
 ;;
-;; What it buys us: side-by-side windows are separated by 30 px of
+;; What it buys us: side-by-side windows are separated by a band of
 ;; background colour instead of a 1 px line, so each pane reads as a
 ;; distinct surface.  Mode line and fringes gain some breathing room.
 ;;
-;; Must come AFTER the theme is loaded: the mode reads the `default' face
-;; background to paint the dividers with it.
+;; Placement matters: this block must come AFTER the theme is loaded,
+;; because the mode reads the background of the `default' face in order
+;; to paint the dividers with it.
 ;;
 ;; Reversible at any time with M-x spacious-padding-mode: the mode stores
-;; the original frame parameters and restores them when disabled.
+;; the original frame parameters and restores them when disabled.  One
+;; exception, the scroll bar; see below.
 (use-package spacious-padding
   :custom
-  ;; Upstream defaults, kept here for visibility; only
-  ;; :internal-border-width differs, to preserve the 8 px inner margin
-  ;; already set in early-init.el and avoid a jump at startup.
+  ;; The plist below carries the upstream defaults, kept for visibility.
+  ;; Three values differ from them and are marked CHANGED inline.
   ;;
-  ;; Never set :right-divider-width below 2: the package hides the
-  ;; `vertical-border' face unconditionally, but only paints the divider
-  ;; when its width is greater than 1.  Below that, windows would end up
-  ;; with no visible separation at all.
+  ;; 1. :internal-border-width is the space between the frame edge and
+  ;;    its contents, on all four sides -- below the minibuffer included.
+  ;;    Set to 12 to match the dividers, so the frame keeps one uniform
+  ;;    margin all around.
+  ;;    MUST be kept in sync with early-init.el, which paints the first
+  ;;    frame before this file is read: a mismatch shows up as the margin
+  ;;    visibly jumping at startup.
+  ;;
+  ;; 2. :right-divider-width is lowered from the upstream 30, which is
+  ;;    too much here because the divider is not the whole gutter: two
+  ;;    side-by-side windows are already separated by a fringe, the
+  ;;    scroll bar and another fringe.
+  ;;    Never set it below 2: the package hides the `vertical-border'
+  ;;    face unconditionally, but paints the divider only when its width
+  ;;    is greater than 1.  Below that, windows would end up with no
+  ;;    visible separation at all.
+  ;;
+  ;; 3. :scroll-bar-width must match the native macOS scroll bar width or
+  ;;    the bar gets clipped; the upstream default of 8 targets the thin
+  ;;    GTK bar.  Measure it with M-: (frame-scroll-bar-width) after
+  ;;    setting that frame parameter to nil.  Two caveats: nil is not
+  ;;    usable in this plist (the package falls back to a hardcoded 8),
+  ;;    and turning the mode off does not restore the native width
+  ;;    either -- that takes a restart.
   (spacious-padding-widths
-   '( :internal-border-width 8
+   '( :internal-border-width 14   ; CHANGED - margin around the frame
       :header-line-width 4
       :mode-line-width 6
       :custom-button-width 3
       :tab-width 4
-      :right-divider-width 30
-      :scroll-bar-width 8
+      :right-divider-width 12     ; CHANGED - gap between side-by-side windows
+      :scroll-bar-width 17        ; CHANGED - native macOS width
       :fringe-width 8))
   :init
-  (spacious-padding-mode 1))
+  (spacious-padding-mode 1)
+  :config
+  ;; The package handles the right divider only: it has no
+  ;; :bottom-divider-width key, so windows stacked with C-x 2 would get
+  ;; no gap at all, with the mode line as their only separator.  We set
+  ;; that frame parameter ourselves, at the same 12 px as everything
+  ;; else.  It reads as empty space because the package already paints
+  ;; the `window-divider' face with the background colour, and that face
+  ;; covers the bottom divider too.
+  ;;
+  ;; Kept inside :config on purpose: without spacious-padding the divider
+  ;; would show up as a visible grey bar.
+  ;;
+  ;; Two calls because they cover different frames: default-frame-alist
+  ;; applies to frames created later, modify-all-frames-parameters to the
+  ;; one already open at startup.
+  (let ((width 12))
+    (add-to-list 'default-frame-alist `(bottom-divider-width . ,width))
+    (modify-all-frames-parameters `((bottom-divider-width . ,width)))))
 
 ;;; --- Minibuffer moderno ---
 
