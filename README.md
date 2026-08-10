@@ -1,32 +1,62 @@
-
 # emacs-config
 
-Personal configuration for GNU Emacs.
+Personal GNU Emacs configuration.
 
-XDG convention: lives in `~/.config/emacs/`, not in `~/.emacs.d/`.
+Follows the XDG convention: it lives in `~/.config/emacs/`, not in
+`~/.emacs.d/`.
+
+## Requirements
+
+- GNU Emacs 30 or later.
+- On macOS, [Emacs Plus](https://github.com/d12frosted/homebrew-emacs-plus).
+  Automatic light/dark theme switching relies on the
+  `ns-system-appearance-change-functions` hook, which only Emacs Plus
+  provides; on any other build the configuration falls back to a fixed
+  light theme.
+- Optional external tools:
+  - `ripgrep`, required by `consult-ripgrep`;
+  - the JetBrains Mono font, with Menlo as a fallback;
+  - one language server per language (`pyright`, `gopls`,
+    `rust-analyzer`, ...), required by Eglot.
 
 ## Contents
 
-- `early-init.el`: initial frame appearance (transparent title bar, inner margin, window size).
-- `init.el`: main configuration, extensively commented
-  - core behaviours: backups and auto-saves gathered into dedicated directories, auto-revert, save-place, winner-mode, repeat-mode, and more;
-  - minibuffer and navigation: vertico, orderless, marginalia, consult, embark;
+- `early-init.el` — initial frame appearance: transparent title bar,
+  inner border, window size.
+- `init.el` — the main configuration, extensively commented:
+  - core behaviour: backups and auto-saves collected into dedicated
+    directories, auto-revert, save-place, winner-mode, repeat-mode,
+    recentf, savehist, so-long;
+  - macOS integration: pixel-precision scrolling, context menu,
+    `exec-path-from-shell`, deletion to the system Trash;
+  - appearance: Modus themes following the system light/dark
+    appearance, font and line spacing;
+  - minibuffer and navigation: vertico, orderless, marginalia, consult,
+    embark, which-key;
+  - in-buffer completion: corfu;
   - git: magit and diff-hl;
   - programming: tree-sitter (via treesit-auto) and eglot;
-  - modal editing: meow (standard QWERTY layout).
+  - modal editing: meow, standard QWERTY layout;
+  - utilities: helpful, casual, vundo.
 
 ## Installation
 
-```sh
-git clone https://codeberg.org/Antarctic_Day/emacs-config.git ~/.config/emacs
-```
+    git clone <URL-CODEBERG> ~/.config/emacs
 
-On first launch, Emacs downloads and installs the packages into `elpa/` by itself.
+On first launch Emacs downloads and installs the packages into `elpa/`
+by itself.
 
-External dependencies (via Homebrew): `ripgrep` for `consult-ripgrep`; the language servers for eglot (e.g. `pyright`, `gopls`, `rust-analyzer`) must be installed separately.
+## Repository
+
+- Primary: Codeberg — <URL-CODEBERG>
+- Mirror: GitHub — https://github.com/AntarcticDay/emacs-config
+  (mirror only; all work is pushed to Codeberg)
 
 ## Notes
 
-- The `.gitignore` works as a *whitelist*: everything is ignored except the files listed explicitly. Generated content (`elpa/`, `backups/`,
-  `auto-saves/`, `custom.el`, ...) is not tracked.
-- `custom.el` stays local to the machine.
+- `.gitignore` is a *whitelist*: everything is ignored except the files
+  listed explicitly. A new file must be whitelisted there first, or
+  `git add` will refuse it.
+- Generated and machine-local content (`elpa/`, `backups/`,
+  `auto-saves/`, `custom.el`) is not tracked.
+  
