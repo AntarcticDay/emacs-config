@@ -8,6 +8,13 @@
 !early-init.el
 !init.el
 
+# ... e i temi personali.
+# La cartella va riammessa PRIMA dei file che contiene: se una directory
+# resta esclusa, git non vi entra nemmeno e le eccezioni sui file interni
+# non vengono mai valutate.
+!themes/
+!themes/*.el
+
 # Deliberately untracked, already covered by the `*` rule above:
 #   elpa/        packages installed by package.el
 #   backups/     backup copies
