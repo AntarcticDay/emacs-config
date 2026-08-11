@@ -50,6 +50,7 @@
 (require 'my-completion)   ; completamento dentro il buffer
 (require 'my-dired)        ; gestione dei file
 (require 'my-tools)        ; utilità
+(require 'my-icons)        ; icone (decorative) per i moduli qui sopra
 (require 'my-git)          ; magit e diff-hl
 (require 'my-prog)         ; tree-sitter ed eglot
 (require 'my-meow)         ; editing modale

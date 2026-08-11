@@ -160,6 +160,36 @@
 
 ;;; ---
 
+;; Continuation lines of a wrapped line inherit the indentation, the comment
+;; prefix or the list bullet of the line they belong to, instead of restarting
+;; at the left margin.  Display only: the text on disk is untouched.
+;; Built in since Emacs 30.1, where it absorbed the adaptive-wrap ELPA package
+;; from GNU ELPA -- online advice still recommending that package is outdated.
+;;
+;; Enabled globally, and not only in text-mode: long lines wrap in code buffers
+;; too (truncate-lines is nil by default there), and a wrapped comment or a long
+;; argument list reads better indented under its own line.
+;;
+;; Cost: one jit-lock function per buffer, recomputing a prefix for the lines
+;; being redisplayed.  Negligible on ordinary files; for the pathological case
+;; see the so-long block at the end of this file.
+;;
+;; Two things worth knowing:
+;; - the prefix is built out of SPACE characters, counted in characters and not
+;;   in pixels.  In a proportionally spaced buffer (variable-pitch-mode, see
+;;   my-appearance.el) indented paragraphs still line up exactly, while list
+;;   bullets fall a couple of pixels short, because "- " is wider than two
+;;   spaces.  Addressed in Emacs versions later than 30;
+;; - org-indent-mode sets the same `wrap-prefix' text property, so the two will
+;;   have to be reconciled when Org gets configured.
+;;
+;; Tuning knob: `visual-wrap-extra-indent' adds a fixed amount of indentation on
+;; top of the computed one; a negative value takes some away.
+
+(global-visual-wrap-prefix-mode 1)
+
+;;; ---
+
 ;; I comandi di frase (M-a, M-e, M-k) e il riempimento dei paragrafi presumono, di default, la convenzione dattilografica americana: DUE spazi dopo il punto. In italiano non esiste: punto + uno spazio delimita la frase.
 ;; Nota: il rovescio della medaglia è che anche i punti delle abbreviazioni ("sig. Rossi", "ecc.") contano come fine frase. Compromesso comunque giusto: con il default, in un testo italiano M-e non riconoscerebbe quasi nessuna frase reale.
 
@@ -179,6 +209,7 @@
 ;; ibuffer (integrato): versione OPERATIVA dell'elenco buffer, sullo stesso tasto e con lo stesso scopo di list-buffers: marca, chiude, salva più buffer insieme, raggruppa.
 ;; Stessa sostituzione "un gradino sopra" già fatta con recentf-open su C-x C-r: il tasto standard resta, cambia solo il comando (più capace) che risponde.
 ;; Estensione futura: casual-ibuffer-tmenu su C-c o, con lo schema with-eval-after-load 'ibuffer già documentato per casual (vedi my-tools.el: la keymap di ibuffer non esiste all'avvio).
+;; Le icone accanto ai buffer elencati sono in my-icons.el.
 
 (keymap-global-set "C-x C-b" #'ibuffer)
 
@@ -188,6 +219,17 @@
 ;; Invisibile nel lavoro normale: interviene solo quando serve.
 
 (global-so-long-mode 1)
+
+;; so-long switches off the expensive minor modes listed in so-long-minor-modes,
+;; but visual-wrap-prefix-mode (see above) is not one of them in Emacs 30.  It
+;; would keep computing wrap prefixes on exactly the lines so-long exists to
+;; protect us from -- and those buffers really do wrap, because so-long
+;; deliberately sets truncate-lines to nil in them, for faster vertical movement
+;; inside a huge line.  So we add it to the list ourselves.
+;; MUST come after the call above: so-long is autoloaded, so the variable only
+;; comes into existence once global-so-long-mode has pulled the library in.
+
+(add-to-list 'so-long-minor-modes 'visual-wrap-prefix-mode)
 
 
 (provide 'my-core)

@@ -3,7 +3,8 @@
 ;;; Commentary:
 
 ;; Impostazioni di dired.  Il menu casual-dired-tmenu su C-c o e'
-;; dichiarato in my-tools.el, insieme al resto di casual.
+;; dichiarato in my-tools.el, insieme al resto di casual; le icone
+;; accanto ai file sono in my-icons.el.
 
 ;;; Code:
 ;; In dired, con due finestre dired affiancate, copia (C) e sposta (R) propongono automaticamente l'altra finestra come destinazione.
