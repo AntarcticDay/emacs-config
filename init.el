@@ -21,6 +21,15 @@
 
 (setq custom-file (locate-user-emacs-file "custom.el"))
 
+;;; --- Percorso dei moduli ---
+
+;; La configurazione è divisa in moduli, raccolti in ~/.config/emacs/lisp/.
+;; Questa riga aggiunge quella cartella a load-path, l'elenco delle cartelle
+;; in cui Emacs cerca le librerie: è ciò che permette a `require' (più sotto)
+;; di trovare i moduli per nome invece che per percorso.
+
+(add-to-list 'load-path (locate-user-emacs-file "lisp"))
+
 ;;; ---
 
 ;; Salta la schermata di benvenuto all'avvio.
@@ -266,41 +275,7 @@
 
 ;;; --- Archivio pacchetti e use-package ---
 
-;; package.el è il gestore pacchetti integrato.
-;; Di default conosce GNU ELPA e NonGNU ELPA; aggiungo MELPA, l'archivio comunitario.
-
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-
-;; Quando un pacchetto esiste in più archivi, preferiamo quelli stabili (GNU, poi NonGNU) alle snapshot giornaliere di MELPA.
-;; I pacchetti presenti SOLO su MELPA restano comunque installabili.
-
-(setq package-archive-priorities
-      '(("gnu" . 3) ("nongnu" . 2) ("melpa" . 1)))
-
-;;; ---
-
-;; Di default package.el rifiuta di aggiornare i pacchetti integrati.
-;; Questa impostazione consente l'aggiornamento.
-;; È di fatto necessaria per magit: dipende da transient (anch'esso integrato) e spesso ne richiede una versione più recente di quella inclusa in Emacs.
-;; Vale lo stesso per casual (vedi Utilità), che richiede anch'esso un transient recente.
-;; Il rischio è mitigato da package-archive-priorities (sopra): gli integrati vengono aggiornati alle release STABILI di GNU ELPA, non a snapshot di MELPA.
-;; Accorgimenti di metodo:
-;; - preferire M-x package-upgrade (un pacchetto alla volta, quando serve) a M-x package-upgrade-all, per evitare aggiornamenti di massa a sorpresa;
-;; - ogni aggiornamento di un integrato è reversibile: M-x package-delete sulla copia ELPA fa riemergere la versione inclusa in Emacs.
-
-(setq package-install-upgrade-built-in t)
-
-;;; ---
-
-;; Compilazione nativa dei pacchetti AL MOMENTO DELL'INSTALLAZIONE.
-;; Default (nil): la compilazione avviene comunque, ma in modo pigro e asincrono al primo caricamento di ogni file (occasionali picchi di CPU e piccoli scatti).
-;; Con t: installare è un po' più lento, ma il costo si paga una volta sola.
-;; La guardia rende la riga innocua su build prive di native compilation (Emacs Plus la include di default).
-
-(when (native-comp-available-p)
-  (setq package-native-compile t))
+(require 'my-packages)
 
 ;;; ---
 
