@@ -59,10 +59,12 @@
 ;; Nota: si usa load-theme e non modus-themes-load-theme (comodo, perché disattiva da sé i temi attivi) perché quest'ultimo esiste solo nella 5.x: load-theme mantiene il file funzionante anche dove il pacchetto non è installato.
 ;; Nota sulla barra del titolo trasparente (early-init.el): con ns-appearance a nil (il default), macOS fa seguire alla finestra l'aspetto di sistema. Poiché anche il tema segue l'aspetto di sistema, barra e tema restano sincronizzati PER COSTRUZIONE: nessun intervento necessario. Servirebbe impostare ns-appearance solo adottando un tema fisso scollegato dal sistema.
 
-;; TEMPORANEO: finché chaun-bay esiste solo in versione chiara, il meccanismo
-;; che segue l'aspetto di sistema non ha nulla da fare ed è disattivato.
-;; Il blocco resta qui, commentato, e torna in servizio appena esiste
-;; chaun-bay-dark: a quel punto i due rami del pcase divergono di nuovo.
+;; Attenzione a non aggiungere un load-theme fuori dall'`if' qui sotto: verrebbe
+;; eseguito SEMPRE, anche dopo il ramo scuro, e sovrapporrebbe il tema chiaro a
+;; quello appena caricato senza disattivarlo. Il sintomo è insidioso, perché il
+;; difetto colpisce solo l'AVVIO: cambiando aspetto a Emacs già aperto scatta
+;; l'hook, che chiama my/apply-theme da sola e ripulisce tutto.
+;; Controllo rapido: C-h v custom-enabled-themes deve elencare UN SOLO tema.
 
 (defun my/apply-theme (appearance)
   "Carica il tema adatto ad APPEARANCE (`light' o `dark')."
@@ -70,6 +72,7 @@
   (pcase appearance
     ('light (load-theme 'chaun-bay t))
     ('dark  (load-theme 'chaun-bay-dark t))))
+
 (if (boundp 'ns-system-appearance-change-functions)
     (progn
       (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
@@ -78,8 +81,6 @@
                                ns-system-appearance)
                           'light)))
   (load-theme 'chaun-bay t))
-
-(load-theme 'chaun-bay t)
 
 ;;; --- Aspetto: caratteri e tipografia ---
 
