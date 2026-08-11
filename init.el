@@ -383,6 +383,13 @@
 
 ;;; --- Tema: dichiarazione del pacchetto ---
 
+;; Personal themes live in the repository, under themes/, so that they
+;; are tracked by git.  This MUST come before the modus-themes package
+;; declaration: the manual warns that customizing custom-theme-load-path
+;; afterwards breaks the loading of theme files.
+(add-to-list 'custom-theme-load-path
+             (expand-file-name "themes/" user-emacs-directory))
+
 ;; modus-themes from GNU ELPA, installed on top of the copy bundled with
 ;; Emacs 30 (version 4.x).  Reference version: 5.3.0.  Version 5 is what
 ;; brings the palette machinery we are after: semantic mappings, palette
@@ -425,12 +432,17 @@
 ;; Nota: si usa load-theme e non modus-themes-load-theme (comodo, perché disattiva da sé i temi attivi) perché quest'ultimo esiste solo nella 5.x: load-theme mantiene il file funzionante anche dove il pacchetto non è installato.
 ;; Nota sulla barra del titolo trasparente (early-init.el): con ns-appearance a nil (il default), macOS fa seguire alla finestra l'aspetto di sistema. Poiché anche il tema segue l'aspetto di sistema, barra e tema restano sincronizzati PER COSTRUZIONE: nessun intervento necessario. Servirebbe impostare ns-appearance solo adottando un tema fisso scollegato dal sistema.
 
+;; TEMPORANEO: finché chaun-bay esiste solo in versione chiara, il meccanismo
+;; che segue l'aspetto di sistema non ha nulla da fare ed è disattivato.
+;; Il blocco resta qui, commentato, e torna in servizio appena esiste
+;; chaun-bay-dark: a quel punto i due rami del pcase divergono di nuovo.
+
 (defun my/apply-theme (appearance)
   "Carica il tema adatto ad APPEARANCE (`light' o `dark')."
   (mapc #'disable-theme custom-enabled-themes)  ; evita temi sovrapposti
   (pcase appearance
-    ('light (load-theme 'modus-operandi t))
-    ('dark  (load-theme 'modus-vivendi t))))
+    ('light (load-theme 'chaun-bay t))
+    ('dark  (load-theme 'chaun-bay-dark t))))
 (if (boundp 'ns-system-appearance-change-functions)
     (progn
       (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
@@ -438,7 +450,9 @@
       (my/apply-theme (or (and (boundp 'ns-system-appearance)
                                ns-system-appearance)
                           'light)))
-  (load-theme 'modus-operandi t))
+  (load-theme 'chaun-bay t))
+
+(load-theme 'chaun-bay t)
 
 ;;; --- Aspetto: caratteri e tipografia ---
 
